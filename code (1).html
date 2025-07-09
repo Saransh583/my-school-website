@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Victor Convent Higher Secondary School</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js library for 3D elements -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        /* Admission Image Placeholder */
+            .admission-img {
+                background: url('https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/admissions-placeholder.png') no-repeat center center;
+                background-size: cover;
+                height: 100%;
+                min-height: 300px;
+                border-radius: 0.5rem;
+            }
+
+            /* Custom Styles */
+        .quick-link {
+            transition: all 0.3s ease;
+        }
+        
+        .quick-link:hover {
+            transform: translateY(-3px);
+            background-color: #1e40af !important;
+        }
+        
+        .quick-link-btn {
+            transition: all 0.3s ease;
+            transform: perspective(1000px);
+        }
+        
+        .quick-link-btn:hover {
+            transform: perspective(1000px) translateY(-5px) rotateX(5deg);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url('https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/7d00614d-ea4c-4f90-b96d-da78a24f7ff9.png') no-repeat center center;
+            background-size: cover;
+            height: 500px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .more-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+        
+        .more-content.show {
+            max-height: 1000px;
+            transition: max-height 0.5s ease-in;
+        }
+        
+        .teacher-card:hover {
+            transform: translateY(-10px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        /* Floating animation for 3D effect */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* 3D Card effect */
+        .card-3d {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        
+        .card-3d:hover {
+            transform: rotateY(10deg) rotateX(5deg);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.2);
+        }
+        
+        /* 3D Button effect */
+        .btn-3d {
+            position: relative;
+            transition: all 0.3s;
+            transform-style: preserve-3d;
+        }
+        
+        .btn-3d:active {
+            transform: translateY(5px);
+        }
+        
+        .facility-info {
+            opacity: 0;
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.7);
+        }
+        
+        .facility-card:hover .facility-info {
+            opacity: 1;
+            bottom: 0;
+        }
+        
+        /* 3D Gallery effect */
+        .gallery-item {
+            transition: all 0.5s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.05) rotateY(5deg) rotateX(5deg);
+            z-index: 10;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-blue-800 text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <img src="C:\Users\SARANSH\Downloads\New folder (2)\Group 1 copy 2.png" alt="Victor Convent school logo" class="h-12">
+                <span class="text-xl font-bold">VCHSS</span>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#home" class="hover:text-yellow-300">Home</a>
+                <a href="#about" class="hover:text-yellow-300">About Us</a>
+                <a href="#academics" class="hover:text-yellow-300">Academics</a>
+                <a href="#facilities" class="hover:text-yellow-300">Facilities</a>
+                <a href="#gallery" class="hover:text-yellow-300">Gallery</a>
+                <a href="#contact" class="hover:text-yellow-300">Contact</a>
+            </div>
+            <button class="md:hidden focus:outline-none" id="mobile-menu-button">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="md:hidden hidden bg-blue-900" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="#home" class="block px-3 py-2 hover:bg-blue-700 rounded-md flex items-center quick-link quick-link-btn" onclick="handleQuickLink('home')">
+                    <span>Home</span>
+                </a>
+                <a href="#about" class="block px-3 py-2 hover:bg-blue-700 rounded-md flex items-center quick-link" onclick="handleQuickLink('about')">
+                    <span>About Us</span>
+                </a>
+                <a href="#admissions" class="block px-3 py-2 hover:bg-blue-700 rounded-md flex items-center quick-link" onclick="handleQuickLink('admissions')">
+                    <span>Admissions</span>
+                </a>
+                <a href="#academics" class="block px-3 py-2 hover:bg-blue-700 rounded-md flex items-center quick-link" onclick="handleQuickLink('academics')">
+                    <span>Academics</span>
+                </a>
+                <a href="#facilities" class="block px-3 py-2 hover:bg-blue-700 rounded-md flex items-center quick-link" onclick="handleQuickLink('facilities')">
+                    <span>Facilities</span>
+                </a>
+                <a href="#gallery" class="block px-3 py-2 hover:bg-blue-700 rounded-md flex items-center quick-link" onclick="handleQuickLink('gallery')">
+                    <span>Gallery</span>
+                </a>
+                <a href="#contact" class="block px-3 py-2 hover:bg-blue-700 rounded-md flex items-center quick-link" onclick="handleQuickLink('contact')">
+                    <span>Contact</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero flex items-center justify-center text-center text-white">
+        <div class="px-4">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 drop-shadow-lg">Victor Convent Higher Secondary School</h1>
+            <p class="text-xl md:text-2xl mb-8 drop-shadow">Excellence in Education Since 1990</p>
+            <a href="#about" class="bg-yellow-500 hover:bg-yellow-600 text-blue-900 font-bold py-3 px-6 rounded-full transition duration-300 inline-block btn-3d floating">Learn More</a>
+            
+            <!-- 3D School Badge -->
+            <div id="badge3d" class="absolute bottom-4 right-4 w-24 h-24 hidden md:block"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-blue-800">About Our School</h2>
+            <div class="flex flex-col md:flex-row gap-8 items-center">
+                <div class="md:w-1/2">
+                    <div class="card-3d relative group">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/dd886fc4-5239-4383-8e20-6562c558f932.png" alt="School building" class="rounded-lg shadow-xl w-full">
+                        <div class="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-20 transition-opacity rounded-lg"></div>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <h3 class="text-2xl font-bold mb-4 text-blue-700">Our Mission</h3>
+                    <p class="text-gray-700 mb-6">Victor Convent Higher Secondary School is dedicated to nurturing young minds through holistic education that combines academic excellence with moral values and community service.</p>
+                    
+                    <h3 class="text-2xl font-bold mb-4 text-blue-700">Our History</h3>
+                    <p class="text-gray-700 mb-4">Founded in 1990 by the Victor Education Society, our school has grown from a modest institution to one of the most respected educational establishments in the region.</p>
+                    <div class="more-content" id="about-more">
+                        <p class="text-gray-700 mb-4">With over 30 years of educational excellence, we've consistently ranked among the top schools in board examinations while maintaining a 100% placement record for college admissions.</p>
+                        <p class="text-gray-700 mb-4">Our alumni network includes professionals across industries, many of whom return to mentor current students and contribute to the school's development.</p>
+                    </div>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded btn-3d mt-2" onclick="toggleMore('about-more', this)">Read More</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admissions Section -->
+    <section id="admissions" class="py-20 bg-blue-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-blue-800">Admissions</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4 text-blue-700">Admission Process</h3>
+                    <p class="text-gray-700 mb-6">Victor Convent Higher Secondary School welcomes students from all backgrounds. Our admission process is transparent and merit-based.</p>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h4 class="text-xl font-bold mb-3 text-blue-600">How to Apply</h4>
+                        <ol class="list-decimal pl-5 space-y-2">
+                            <li>Submit online application form</li>
+                            <li>Attend entrance assessment</li>
+                            <li>Interview with academic coordinator</li>
+                            <li>Registration & documentation</li>
+                        </ol>
+                        <!-- Admission Query Form -->
+                    <div id="admissionForm" class="hidden mt-6 bg-white p-6 rounded-lg shadow-md">
+                        <h4 class="text-xl font-bold mb-4 text-blue-600">Admission Inquiry</h4>
+                        <form id="enquiryForm" class="space-y-4">
+                            <div>
+                                <label class="block text-gray-700 mb-2">Student Name</label>
+                                <input type="text" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 mb-2">Grade Applying For</label>
+                                <select class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500" required>
+                                    <option value="">Select Grade</option>
+                                    <option>Pre-K</option>
+                                    <option>Kindergarten</option>
+                                    <option>Grade 1-5</option>
+                                    <option>Grade 6-8</option>
+                                    <option>Grade 9-12</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 mb-2">Parent Email</label>
+                                <input type="email" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500" required>
+                            </div>
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded btn-3d w-full">Submit Inquiry</button>
+                        </form>
+                    </div>
+                    <button onclick="document.getElementById('admissionForm').classList.toggle('hidden');" 
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-6 btn-3d">
+                        Apply Now
+                    </button>
+                    </div>
+                </div>
+                <div>
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/admissions-placeholder.png" alt="Students learning in classroom" class="rounded-lg w-full">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Academics Section with Tabs -->
+    <section id="academics" class="py-20 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-blue-800">Academic Programs</h2>
+            
+            <div class="flex flex-wrap justify-center mb-8 gap-2">
+                <button class="tab-button active px-6 py-2 bg-blue-700 text-white rounded-full hover:bg-blue-800 transition btn-3d" onclick="openTab(event, 'primary')">Primary</button>
+                <button class="tab-button px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition btn-3d" onclick="openTab(event, 'secondary')">Secondary</button>
+                <button class="tab-button px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition btn-3d" onclick="openTab(event, 'senior')">Senior Secondary</button>
+                <button class="tab-button px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition btn-3d" onclick="openTab(event, 'co-curricular')">Co-Curricular</button>
+            </div>
+            
+            <!-- Primary Tab Content -->
+            <div id="primary" class="tab-content active">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md card-3d">
+                        <h3 class="text-xl font-bold mb-4 text-blue-700">Primary Education</h3>
+                        <p class="text-gray-700 mb-4">Our primary program focuses on building strong foundations in literacy, numeracy, and creative thinking through interactive learning methods.</p>
+                        <ul class="list-disc pl-5 text-gray-700 mb-4">
+                            <li>CBSE curriculum with Montessori influences</li>
+                            <li>Focus on experiential learning</li>
+                            <li>Individual attention with low student-teacher ratio</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md card-3d">
+                        <h3 class="text-xl font-bold mb-4 text-blue-700">Special Features</h3>
+                        <div class="flex flex-wrap gap-4 mb-4">
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">Phonics Program</span>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">Abacus Training</span>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">Storytelling</span>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">Gardening</span>
+                        </div>
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/551edf14-223d-4962-bea3-e46644f9a258.png" alt="Primary classroom" class="rounded-lg w-full">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Secondary Tab Content -->
+            <div id="secondary" class="tab-content">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md card-3d">
+                        <h3 class="text-xl font-bold mb-4 text-blue-700">Secondary Education</h3>
+                        <p class="text-gray-700 mb-4">Grades 6-10 follow a rigorous academic curriculum while encouraging exploration of individual interests through electives.</p>
+                        <ul class="list-disc pl-5 text-gray-700 mb-4">
+                            <li>CBSE curriculum</li>
+                            <li>STEM-focused approach</li>
+                            <li>Language options: Hindi, Sanskrit, French</li>
+                            <li>Career guidance from Grade 9</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md card-3d">
+                        <h3 class="text-xl font-bold mb-4 text-blue-700">Achievements</h3>
+                        <div class="mb-4">
+                            <p class="font-semibold text-gray-800">Board Exam Results:</p>
+                            <div class="bg-gray-100 p-3 rounded-lg">
+                                <p class="text-blue-700"><span class="font-bold">2023:</span> 98.2% passed with distinction</p>
+                                <p class="text-blue-700"><span class="font-bold">2022:</span> 100% pass rate</p>
+                                <p class="text-blue-700"><span class="font-bold">2021:</span> State topper in Science</p>
+                            </div>
+                        </div>
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/db340618-476b-427e-99d4-65b446ee7679.png" alt="Science lab" class="rounded-lg w-full">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Senior Secondary Tab Content -->
+            <div id="senior" class="tab-content">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md card-3d">
+                        <h3 class="text-xl font-bold mb-4 text-blue-700">Senior Secondary (10+2)</h3>
+                        <p class="text-gray-700 mb-4">Specialized streams designed to prepare students for higher education and professional careers.</p>
+                        <div class="mb-6">
+                            <h4 class="font-bold text-blue-600 mb-2">Offered Streams:</h4>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="bg-blue-50 p-3 rounded-lg">
+                                    <p class="font-semibold">Science</p>
+                                    <p class="text-sm">Physics, Chemistry, Math/Biology</p>
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded-lg">
+                                    <p class="font-semibold">Commerce</p>
+                                    <p class="text-sm">Accounts, Business, Economics</p>
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded-lg">
+                                    <p class="font-semibold">Humanities</p>
+                                    <p class="text-sm">History, Political Science, Psychology</p>
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded-lg">
+                                    <p class="font-semibold">Computer Science</p>
+                                    <p class="text-sm">Programming, Informatics</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md card-3d">
+                        <h3 class="text-xl font-bold mb-4 text-blue-700">Higher Education Preparation</h3>
+                        <div class="space-y-4 mb-4">
+                            <div class="flex items-start">
+                                <div class="bg-yellow-100 p-2 rounded-full mr-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-600" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-semibold">College Counseling</p>
+                                    <p class="text-sm text-gray-600">Individualized guidance for university applications</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="bg-yellow-100 p-2 rounded-full mr-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-600" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-semibold">Entrance Exam Coaching</p>
+                                    <p class="text-sm text-gray-600">JEE, NEET, CLAT preparation integrated in curriculum</p>
+                                </div>
+                            </div>
+                        </div>
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/38721b76-f3b1-40dc-9ed1-a5718dc92ef6.png" alt="University counseling" class="rounded-lg w-full">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Co-Curricular Tab Content -->
+            <div id="co-curricular" class="tab-content">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md card-3d">
+                        <h3 class="text-xl font-bold mb-4 text-blue-700">Beyond The Classroom</h3>
+                        <p class="text-gray-700 mb-4">Our comprehensive co-curricular program ensures well-rounded development through diverse activities.</p>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-bold text-blue-600">Sports</h4>
+                                <div class="flex flex-wrap gap-2 mt-2">
+                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Cricket</span>
+                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Basketball</span>
+                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Chess</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-blue-600">Arts</h4>
+                                <div class="flex flex-wrap gap-2 mt-2">
+                                    <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">Music</span>
+                                    <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">Drama</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md card-3d">
+                        <h3 class="text-xl font-bold mb-4 text-blue-700">Achievements</h3>
+                        <div class="space-y-4 mb-4">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="font-semibold text-blue-700">Inter-School Cricket Champions</p>
+                                <p class="text-sm text-gray-600">State level tournament winners 2022, 2023</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="font-semibold text-blue-700">National Science Exhibition</p>
+                                <p class="text-sm text-gray-600">First prize for innovative solar project</p>
+                            </div>
+                        </div>
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/21ec6e69-a56f-4f3b-954d-9f3be820be1b.png" alt="Sports championship" class="rounded-lg w-full">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Facilities Section -->
+    <section id="facilities" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-blue-800">Our Facilities</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Facility Cards with 3D hover effects -->
+                <div class="relative overflow-hidden rounded-lg shadow-lg h-64 facility-card card-3d">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/7c6833ce-36c5-4758-b21a-69aef94af4e9.png" alt="Science lab" class="w-full h-full object-cover">
+                    <div class="facility-info text-white p-4">
+                        <h3 class="font-bold text-xl mb-2">Science Labs</h3>
+                        <p class="text-sm">Fully equipped physics, chemistry, and biology laboratories.</p>
+                        <button class="bg-white text-blue-600 font-bold py-1 px-3 rounded mt-2 btn-3d">Explore</button>
+                    </div>
+                </div>
+                
+                <div class="relative overflow-hidden rounded-lg shadow-lg h-64 facility-card card-3d">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/68e76a4c-8415-42dd-8531-4d65a42582c7.png" alt="Library" class="w-full h-full object-cover">
+                    <div class="facility-info text-white p-4">
+                        <h3 class="font-bold text-xl mb-2">Library</h3>
+                        <p class="text-sm">15,000+ books with digital resources.</p>
+                        <button class="bg-white text-blue-600 font-bold py-1 px-3 rounded mt-2 btn-3d">Explore</button>
+                    </div>
+                </div>
+                
+                <div class="relative overflow-hidden rounded-lg shadow-lg h-64 facility-card card-3d">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/33e5af11-9eff-4734-b52d-b588b5839658.png" alt="Sports complex" class="w-full h-full object-cover">
+                    <div class="facility-info text-white p-4">
+                        <h3 class="font-bold text-xl mb-2">Sports Complex</h3>
+                        <p class="text-sm">Indoor and outdoor facilities.</p>
+                        <button class="bg-white text-blue-600 font-bold py-1 px-3 rounded mt-2 btn-3d">Explore</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Teachers Section -->
+    <section class="py-20 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-blue-800">Our Faculty</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Teacher Cards with 3D effects -->
+                <div class="teacher-card bg-white rounded-lg overflow-hidden shadow-lg transition-transform card-3d">
+                    <div class="relative group">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a1190b91-c889-45f4-aff0-3dfcfaaa8950.png" alt="Math teacher" class="w-full h-48 object-cover">
+                        <div class="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-blue-700 mb-1">Mrs. Anita Sharma</h3>
+                        <p class="text-yellow-600 font-semibold mb-3">Mathematics</p>
+                        <p class="text-gray-600 mb-4">M.Sc Mathematics, 15+ years experience.</p>
+                    </div>
+                </div>
+                
+                <div class="teacher-card bg-white rounded-lg overflow-hidden shadow-lg transition-transform card-3d">
+                    <div class="relative group">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/e9a051b2-0181-45db-9783-917edeccd692.png" alt="Physics teacher" class="w-full h-48 object-cover">
+                        <div class="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-blue-700 mb-1">Dr. Rajiv Malhotra</h3>
+                        <p class="text-yellow-600 font-semibold mb-3">Physics</p>
+                        <p class="text-gray-600 mb-4">Ph.D Nuclear Physics.</p>
+                    </div>
+                </div>
+                
+                <div class="teacher-card bg-white rounded-lg overflow-hidden shadow-lg transition-transform card-3d">
+                    <div class="relative group">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/177b2107-09f5-42b6-97ea-19ded99148a9.png" alt="English teacher" class="w-full h-48 object-cover">
+                        <div class="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-blue-700 mb-1">Ms. Priya Chatterjee</h3>
+                        <p class="text-yellow-600 font-semibold mb-3">English Literature</p>
+                        <p class="text-gray-600 mb-4">MA English Literature, Cambridge certified.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8">
+                <button id="moreTeachersBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded btn-3d" onclick="toggleMore('moreTeachers', this)">View More Faculty</button>
+                <div id="moreTeachers" class="grid md:grid-cols-3 gap-8 mt-8 more-content">
+                    <!-- Additional Teachers -->
+                    <div class="teacher-card bg-white rounded-lg overflow-hidden shadow-lg transition-transform card-3d">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/fe6ded6f-bbe7-4b44-a6f4-187a67e58e54.png" alt="Computer teacher" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-blue-700 mb-1">Mr. Sunil Kumar</h3>
+                            <p class="text-yellow-600 font-semibold mb-3">Computer Science</p>
+                            <p class="text-gray-600 mb-4">MTech CSE, AI specialist.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="teacher-card bg-white rounded-lg overflow-hidden shadow-lg transition-transform card-3d">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/5ae05b38-a99a-4137-9117-1208e37a6d01.png" alt="Chemistry teacher" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-blue-700 mb-1">Mrs. Geeta Reddy</h3>
+                            <p class="text-yellow-600 font-semibold mb-3">Chemistry</p>
+                            <p class="text-gray-600 mb-4">PhD Organic Chemistry.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-center mb-8">
+                <button onclick="showEvents()" class="tab-button px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition btn-3d mx-2">Events</button>
+                <button onclick="showGallery()" class="tab-button px-6 py-2 bg-blue-700 text-white rounded-full hover:bg-blue-800 transition btn-3d mx-2">Gallery</button>
+            </div>
+            <div id="eventsSection" class="hidden">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-blue-800">Upcoming Events</h2>
+                <!-- Event listing would be populated from backend -->
+                <div class="grid md:grid-cols-2 gap-8" id="eventsList">
+                    <!-- Events would be dynamically added here -->
+                </div>
+                <!-- Suggest Event Form (initially hidden) -->
+                <div id="suggestEventForm" class="hidden mt-6 bg-white p-6 rounded-lg shadow-md max-w-lg mx-auto">
+                    <h3 class="text-xl font-bold mb-4 text-blue-700">Suggest an Event</h3>
+                    <form id="eventSuggestionForm">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Event Name</label>
+                            <input type="text" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Event Details</label>
+                            <textarea class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500" rows="4" required></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Your Email</label>
+                            <input type="email" class="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500" required>
+                        </div>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded btn-3d w-full">
+                            Submit Suggestion
+                        </button>
+                    </form>
+                </div>
+                <button onclick="document.getElementById('suggestEventForm').classList.toggle('hidden')" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded btn-3d mt-8 mx-auto block">
+                    Suggest an Event
+                </button>
+            </div>
+            <div id="gallerySection">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-blue-800">Gallery</h2>
+            
+            <div class="grid md:grid-cols-3 gap-4">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/cf44f594-0ea2-49d8-ad47-fbb87f5a532c.png" alt="Annual day" class="rounded-lg shadow-md cursor-pointer gallery-item" onclick="openModal(this)">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/7f897dac-515f-44d3-b371-341d77fc7776.png" alt="Science fair" class="rounded-lg shadow-md cursor-pointer gallery-item" onclick="openModal(this)">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/4f8476a6-bbbb-4e1d-8299-1ff8619fdad8.png" alt="Sports day" class="rounded-lg shadow-md cursor-pointer gallery-item" onclick="openModal(this)">
+            </div>
+            
+            <div class="text-center mt-8">
+                <button id="moreGalleryBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded btn-3d" onclick="toggleMore('moreGallery', this)">View More Photos</button>
+                <div id="moreGallery" class="grid md:grid-cols-3 gap-4 mt-4 more-content">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/28b55f14-b705-4b3f-969e-55440c5f46a9.png" alt="School trip" class="rounded-lg shadow-md cursor-pointer gallery-item" onclick="openModal(this)">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/485068ef-2ff5-40b8-a106-e0dcc7dc7e47.png" alt="Art competition" class="rounded-lg shadow-md cursor-pointer gallery-item" onclick="openModal(this)">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/85dbe4a7-1c9a-4d14-b5f3-9e898f9f279b.png" alt="Graduation" class="rounded-lg shadow-md cursor-pointer gallery-item" onclick="openModal(this)">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal for gallery images -->
+        <div id="galleryModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+            <div class="relative max-w-4xl w-full mx-4">
+                <button onclick="closeModal()" class="absolute -top-10 right-0 text-white text-3xl hover:text-yellow-300">&times;</button>
+                <img id="modalImage" src="" alt="" class="w-full rounded-lg shadow-2xl">
+                <p id="modalCaption" class="text-white text-center mt-4 text-lg"></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-blue-800">Contact Us</h2>
+            
+            <div class="flex flex-col md:flex-row gap-8">
+                <div class="md:w-1/2 bg-white p-8 rounded-lg shadow-lg card-3d">
+                    <h3 class="text-2xl font-bold mb-6 text-blue-700">Get In Touch</h3>
+                    <form class="space-y-4">
+                        <div>
+                            <label for="name" class="block text-gray-700 mb-2">Name</label>
+                            <input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-gray-700 mb-2">Email</label>
+                            <input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="message" class="block text-gray-700 mb-2">Message</label>
+                            <textarea id="message" name="message" rows="5" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"></textarea>
+                        </div>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded btn-3d w-full">Send Message</button>
+                    </form>
+                </div>
+                
+                <div class="md:w-1/2 space-y-8">
+                    <div class="bg-white p-8 rounded-lg shadow-lg card-3d">
+                        <h3 class="text-2xl font-bold mb-4 text-blue-700">School Information</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 mr-2 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <div>
+                                    <p class="font-semibold">Address</p>
+                                    <p>123 Education Road, Academic Nagar</p>
+                                    <p>Mumbai 400001, Maharashtra, India</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 mr-2 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                                <div>
+                                    <p class="font-semibold">Phone</p>
+                                    <p>+91 22 1234 5678 (Office)</p>
+                                    <p>+91 22 1234 5679 (Principal)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Google Map with 3D effect -->
+                    <div class="bg-white p-4 rounded-lg shadow-lg card-3d h-64">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3770.9815710451736!2d72.83267641585186!3d19.07264248709153!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c8a1a66d78d9%3A0x7a4ce50d6b1081f9!2sGateway%20of%20India!5e0!3m2!1sen!2sin!4v1588685944567!5m2!1sen!2sin" width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0" class="rounded-lg"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-12 pb-6">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between gap-8 mb-8">
+                <div class="md:w-1/4">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/2e1c3c0a-1696-4225-abce-1c713342e59f.png" alt="School logo" class="h-10">
+                        <span class="text-xl font-bold">Victor Convent HSS</span>
+                    </div>
+                    <p class="text-gray-400">Excellence in Education Since 1990</p>
+                </div>
+                
+                <div class="md:w-1/4">
+                    <h3 class="text-xl font-bold mb-4 text-yellow-400">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#admissions" class="text-gray-400 hover:text-white quick-link-btn" onclick="handleQuickLink('admissions')">Admissions</a></li>
+                        <li><a href="#academics" class="text-gray-400 hover:text-white quick-link-btn" onclick="handleQuickLink('academics')">Academics</a></li>
+                        <li><a href="#facilities" class="text-gray-400 hover:text-white quick-link-btn" onclick="handleQuickLink('facilities')">Facilities</a></li>
+                        <li><a href="#gallery" class="text-gray-400 hover:text-white quick-link-btn" onclick="handleQuickLink('gallery')">Events</a></li>
+                    </ul>
+                </div>
+                
+                <div class="md:w-1/4">
+                    <h3 class="text-xl font-bold mb-4">Contact</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>123 Education Road</li>
+                        <li>Mumbai 400001</li>
+                        <li>info@victorconvent.edu.in</li>
+                        <li>+91 22 1234 5678</li>
+                    </ul>
+                </div>
+                
+                <div class="md:w-1/4">
+                    <h3 class="text-xl font-bold mb-4">Newsletter</h3>
+                    <form class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 text-gray-800 rounded-l focus:outline-none w-full">
+                        <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-4 rounded-r">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-6 mt-6 text-center">
+                <p class="text-gray-400">© 2023 Victor Convent Higher Secondary School. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Three.js 3D badge
+        function init3DBadge() {
+            if (typeof THREE === 'undefined') return;
+            
+            const container = document.getElementById('badge3d');
+            if (!container) return;
+            
+            // Scene setup
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            container.appendChild(renderer.domElement);
+            
+            // Create a 3D school badge
+            const geometry = new THREE.TorusGeometry(0.4, 0.1, 16, 32);
+            const material = new THREE.MeshPhongMaterial({ 
+                color: 0x1565C0,
+                shininess: 100,
+                specular: 0x111111
+            });
+            const torus = new THREE.Mesh(geometry, material);
+            scene.add(torus);
+            
+            // Add letter V in the center
+            const textGeometry = new THREE.TextGeometry('V', {
+                size: 0.3,
+                height: 0.1,
+            });
+            const textMaterial = new THREE.MeshPhongMaterial({ color: 0xFBC02D });
+            const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+            textMesh.position.set(-0.12, -0.18, 0);
+            scene.add(textMesh);
+            
+            // Add lighting
+            const ambientLight = new THREE.AmbientLight(0x404040);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(0, 1, 1);
+            scene.add(directionalLight);
+            
+            camera.position.z = 1;
+            
+            // Animation
+            function animate() {
+                requestAnimationFrame(animate);
+                torus.rotation.x += 0.01;
+                torus.rotation.y += 0.01;
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+        }
+
+        // Quick links handler
+        function handleQuickLink(link) {
+            // Close mobile menu if open
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+            
+            // Get the target element
+            const target = document.getElementById(link);
+            if (target) {
+                window.scrollTo({
+                    top: target.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+            this.classList.toggle('text-yellow-300');
+        });
+
+        // Tab functionality
+        function openTab(event, tabId) {
+            // Prevent default behavior if needed (though not necessary for buttons)
+            event.preventDefault();
+            
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Deactivate all tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('bg-blue-700');
+                btn.classList.add('bg-blue-500');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabId).classList.add('active');
+            
+            // Activate clicked button
+            event.currentTarget.classList.remove('bg-blue-500');
+            event.currentTarget.classList.add('bg-blue-700');
+            
+            // Add 3D tilt effect to active tab
+            event.currentTarget.classList.add('transform');
+            setTimeout(() => {
+                event.currentTarget.classList.remove('transform');
+            }, 300);
+        }
+
+        // Toggle more content functionality
+        function toggleMore(elementId, button) {
+            const element = document.getElementById(elementId);
+            element.classList.toggle('show');
+            
+            if (element.classList.contains('show')) {
+                button.textContent = 'Show Less';
+            } else {
+                button.textContent = 'View More Faculty'; // Changed from 'Read More' for faculty section
+            }
+            
+            // Add 3D press effect
+            button.classList.add('transform', '-translate-y-1', 'scale-95');
+            setTimeout(() => {
+                button.classList.remove('transform', '-translate-y-1', 'scale-95');
+            }, 200);
+        }
+
+        // Gallery modal functionality
+        function openModal(img) {
+            const modal = document.getElementById('galleryModal');
+            const modalImg = document.getElementById('modalImage');
+            const caption = document.getElementById('modalCaption');
+            
+            modal.classList.remove('hidden');
+            modalImg.src = img.src;
+            caption.textContent = img.alt;
+            
+            // Add 3D tilt effect
+            modalImg.classList.add('transform', 'rotate-x-2');
+            setTimeout(() => {
+                modalImg.classList.remove('transform', 'rotate-x-2');
+            }, 300);
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+
+        function showEvents() {
+            document.getElementById('gallerySection').classList.add('hidden');
+            document.getElementById('eventsSection').classList.remove('hidden');
+            document.querySelector('#gallery .tab-button[onclick="showEvents()"]').classList.replace('bg-blue-500','bg-blue-700');
+            document.querySelector('#gallery .tab-button[onclick="showGallery()"]').classList.replace('bg-blue-700','bg-blue-500');
+        }
+        
+        function showGallery() {
+            document.getElementById('eventsSection').classList.add('hidden');
+            document.getElementById('gallerySection').classList.remove('hidden');
+            document.querySelector('#gallery .tab-button[onclick="showGallery()"]').classList.replace('bg-blue-500','bg-blue-700');
+            document.querySelector('#gallery .tab-button[onclick="showEvents()"]').classList.replace('bg-blue-700','bg-blue-500');
+        }
+
+        function closeModal() {
+            document.getElementById('galleryModal').classList.add('hidden');
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Add 3D effect to clicked nav item
+                    this.classList.add('text-yellow-300', 'scale-110');
+                    setTimeout(() => {
+                        this.classList.remove('text-yellow-300', 'scale-110');
+                    }, 300);
+                }
+            });
+        });
+
+        // Handle forms submissions
+        document.getElementById('enquiryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Get form values
+            const studentName = this.querySelector('input[type="text"]').value;
+            const grade = this.querySelector('select').value;
+            const email = this.querySelector('input[type="email"]').value;
+            
+            // Here you would normally send to your backend/send email
+            alert(`Thank you for your inquiry! We've received your application for ${studentName} for ${grade}. We'll contact you at ${email} shortly.`);
+            
+            // Hide form after submission
+            document.getElementById('admissionForm').classList.add('hidden');
+            this.reset(); // Clear form fields
+        });
+
+        document.getElementById('eventSuggestionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your event suggestion! We will review it and get back to you if we decide to include it.');
+            document.getElementById('suggestEventForm').classList.add('hidden');
+            this.reset(); // Clear form fields
+        });
+
+        document.querySelector('#contactForm button[type="submit"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+
+            if (name && email && message) {
+                alert(`Thank you, ${name}! Your message has been sent. We will get back to you at ${email} shortly.`);
+                document.getElementById('contactForm').reset(); // Clear form fields
+            } else {
+                alert('Please fill in all fields.');
+            }
+        });
+
+        // Initialize 3D elements when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            init3DBadge();
+            
+            // Add card tilt effects
+            const cards = document.querySelectorAll('.card-3d');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const x = e.clientX - card.getBoundingClientRect().left;
+                    const y = e.clientY - card.getBoundingClientRect().top;
+                    
+                    const centerX = card.offsetWidth / 2;
+                    const centerY = card.offsetHeight / 2;
+                    
+                    const angleX = (y - centerY) / 20;
+                    const angleY = (centerX - x) / 20;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) scale(1.03)`;
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
